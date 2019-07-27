@@ -1,6 +1,6 @@
 # coding=utf-8
 from django.shortcuts import render, redirect
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseRedirect
 from models import *
 from hashlib import sha1
 # Create your views here.
@@ -44,3 +44,60 @@ def register_exist(request):
     return JsonResponse({'count': count})
 
 
+def login(request):
+    name = request.COOKIES.get('name', '')
+    context = {'title': '用户登录', 'error_name': 0, 'error_pwd': 0, 'name': name}
+    return render(request, 'df_user/login.html', context)
+
+
+def login_handle(request):
+    post = request.POST
+    name = post.get('username')
+    pwd = post.get('pwd')
+    user_list = UserInfo.objects.filter(name=name)
+    print post
+    if len(user_list) == 1:
+        s = sha1()
+        s.update(pwd)
+        s_pwd = s.hexdigest()
+        if user_list[0].pwd == s_pwd:
+            red = HttpResponseRedirect('/user/user_center_info')
+            save = post.get('save')
+            if save == '1':
+                red.set_cookie('name', name)
+            else:
+                red.set_cookie('name', '', max_age=-1)
+            request.session['user_id'] = user_list[0].id
+            request.session['user_name'] = name
+            return red
+        else:
+            context = {'title': '用户登录', 'error_name': 0, 'error_pwd': 1, 'name':name, 'pwd': pwd}
+            return render(request, 'df_user/login.html', context)
+    else:
+        context = {'title': '用户登录', 'error_name': 1, 'error_pwd': 0, 'name':name, 'pwd': pwd}
+        return render(request, 'df_user/login.html', context)
+
+
+def user_center_info(request):
+    user_id = request.session['user_id']
+    email = UserInfo.objects.get(id=user_id).email
+    context = {'title': '用户中心', 'name': request.session['user_name'], 'email': email, 'selected': 'info'}
+    return render(request, 'df_user/user_center_info.html', context)
+
+
+def order(request):
+    context = {'title': '用户中心', 'selected': 'order'}
+    return render(request, 'df_user/user_center_order.html', context)
+
+
+def site(request):
+    user = UserInfo.objects.get(id=request.session['user_id'])
+    if request.method == 'POST':
+        post = request.POST
+        user.consignee = post.get('consignee')
+        user.postcode = post.get('postcode')
+        user.address = post.get('address')
+        user.phone = post.get('phone')
+        user.save()
+    context = {'title': '用户中心', 'selected': 'site', 'user': user}
+    return render(request, 'df_user/user_center_site.html', context)
