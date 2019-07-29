@@ -37,7 +37,9 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'df_user'
+    'df_user',
+    'df_goods',
+    'tinymce',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -108,3 +110,15 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')
 ]
+MEDIA_URL = '/static/goods/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'static/goods')
+
+# nginx server static path
+# STATIC_ROOT = '/var/www/dailyfresh/static'
+
+
+TINYMCE_DEFAULT_CONFIG = {
+    'theme': 'advanced',
+    'width': 600,
+    'height': 400
+}

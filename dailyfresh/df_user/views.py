@@ -81,12 +81,12 @@ def login_handle(request):
 def user_center_info(request):
     user_id = request.session['user_id']
     email = UserInfo.objects.get(id=user_id).email
-    context = {'title': '用户中心', 'name': request.session['user_name'], 'email': email, 'selected': 'info'}
+    context = {'title': '用户中心', 'name': request.session['user_name'], 'page_style': 'user', 'email': email, 'selected': 'info'}
     return render(request, 'df_user/user_center_info.html', context)
 
 
 def order(request):
-    context = {'title': '用户中心', 'selected': 'order'}
+    context = {'title': '用户中心', 'selected': 'order', 'page_style': 'user'}
     return render(request, 'df_user/user_center_order.html', context)
 
 
@@ -99,5 +99,5 @@ def site(request):
         user.address = post.get('address')
         user.phone = post.get('phone')
         user.save()
-    context = {'title': '用户中心', 'selected': 'site', 'user': user}
+    context = {'title': '用户中心', 'selected': 'site', 'page_style': 'user', 'user': user}
     return render(request, 'df_user/user_center_site.html', context)
