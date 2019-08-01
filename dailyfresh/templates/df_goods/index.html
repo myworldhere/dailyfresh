@@ -49,24 +49,24 @@
     {% for data in array %}
 	<div class="list_model">
 		<div class="list_title clearfix">
-			<h3 class="fl" id="model01">{{ data.category.title}}</h3>
+			<h3 class="fl" id="model0{{ forloop.counter }}">{{ data.category.title}}</h3>
 			<div class="subtitle fl">
 				<span>|</span>
-                {% for goods in data.hots %}
-                    <a href="#">{{ goods.title|slice:'10'}}...</a>
+                {% for goods in data.news%}
+                    <a href="/{{ goods.id }}">{{ goods.title|slice:'10'}}...</a>
                 {% endfor %}
 			</div>
-			<a href="#" class="goods_more fr" id="fruit_more">查看更多 ></a>
+			<a href="list_{{ data.category.id }}_1_1" class="goods_more fr" id="fruit_more">查看更多 ></a>
 		</div>
 
 		<div class="goods_con clearfix">
 			<div class="goods_banner fl"><img src="{% static 'images/banner0'%}{{ forloop.counter }}.jpg"></div>
 			<ul class="goods_list fl">
-                {% for goods in data.news %}
+                {% for goods in data.hots%}
                     <li>
-                        <h4><a href="#">{{ goods.title }}</a></h4>
+                        <h4><a href="/{{ goods.id }}">{{ goods.title }}</a></h4>
 
-                        <a href="#"><img src="{% static 'goods' %}/{{ goods.image }}"></a>
+                        <a href="/{{ goods.id }}"><img src="{% static 'goods' %}/{{ goods.image }}"></a>
                         <div class="prize">¥ {{ goods.price }}</div>
                     </li>
                 {% endfor %}
