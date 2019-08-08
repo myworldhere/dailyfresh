@@ -9,7 +9,10 @@ def login(func):
             return func(request, *args, **kwargs)
         else:
             red = HttpResponseRedirect('/user/login')
-            red.set_cookie('url', request.get_full_path())
+            if request.is_ajax():
+                pass
+            else:
+                red.set_cookie('url', request.get_full_path())
             return red
 
     return login_fun

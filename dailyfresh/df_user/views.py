@@ -5,6 +5,8 @@ from models import *
 from df_goods.models import *
 from hashlib import sha1
 import user_decorator
+from df_order.models import *
+from django.core.paginator import Paginator
 
 
 # Create your views here.
@@ -59,7 +61,6 @@ def login_handle(request):
     name = post.get('username')
     pwd = post.get('pwd')
     user_list = UserInfo.objects.filter(name=name)
-    print post
     if len(user_list) == 1:
         s = sha1()
         s.update(pwd)
@@ -95,7 +96,6 @@ def user_center_info(request):
     if records:
         records = records.split(',')
         goods_history = [GoodsInfo.objects.get(id=ID) for ID in records]
-        print goods_history
         context['records'] = goods_history
 
     return render(request, 'df_user/user_center_info.html', context)
@@ -103,7 +103,19 @@ def user_center_info(request):
 
 @user_decorator.login
 def order(request):
-    context = {'title': '用户中心', 'selected': 'order', 'page_style': 'user'}
+    index = request.GET.get('index', default=1)
+    limit = request.GET.get('limit', default=10)
+
+    user_id = request.session.get('user_id')
+    order_list = OrderInfo.objects.filter(user_id=user_id).order_by('-date')
+    array = []
+    for order in order_list:
+        details = order.orderdetailinfo_set.all()
+        array.append({'order': order, 'details': details})
+
+    paginator = Paginator(array, int(limit))
+    page = paginator.page(int(index))
+    context = {'title': '用户中心', 'selected': 'order', 'page_style': 'user', 'page': page, 'paginator': paginator}
     return render(request, 'df_user/user_center_order.html', context)
 
 

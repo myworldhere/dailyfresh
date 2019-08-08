@@ -4,12 +4,26 @@
     <script>
         $(function () {
             $('#sort_' + {{ sort }}).addClass('active')
-        })
+
+
+        });
+        function add_goods(goods_id) {
+            //判断是否登录，若未登录则提示登录
+            if ($('.login_btn').text().indexOf('登录')>=0){
+                alert('请先登录后再购买');
+                location.href = '/user/login';
+                return;
+            }
+            //异步
+            $.get('/cart/add'+ goods_id + '_1/',function (data) {
+                $('#show_count').text(data.count);
+            })
+        }
 
     </script>
+
 {% endblock %}
 {% block content %}
-
 	<div class="breadcrumb">
 		<a href="#">全部分类</a>
 		<span>></span>
@@ -23,8 +37,8 @@
 				<ul>
                     {% for goods in news %}
 					<li>
-						<a href="#"><img src="{% static 'goods' %}/{{ goods.image }}"></a>
-						<h4><a href="#">{{ goods.title }}</a></h4>
+						<a href="/{{ goods.id }}"><img src="{% static 'goods' %}/{{ goods.image }}"></a>
+						<h4><a href="/{{ goods.id }}">{{ goods.title }}</a></h4>
 						<div class="prize">￥{{ goods.price }}</div>
 					</li>
                     {% endfor %}
@@ -47,7 +61,7 @@
 					<div class="operate">
 						<span class="prize">￥{{ goods.price }}</span>
 						<span class="unit">{{ goods.price }}/{{ goods.unit }}</span>
-						<a href="#" class="add_goods" title="加入购物车"></a>
+						<a href="javascript:add_goods({{ goods.id }});" class="add_goods" id="add_goods" title="加入购物车"></a>
 					</div>
 				</li>
                 {% endfor %}

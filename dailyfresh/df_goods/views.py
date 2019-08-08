@@ -1,9 +1,7 @@
 # coding=utf-8
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.core.paginator import Paginator
 from models import *
-
-
 # Create your views here.
 
 
@@ -67,3 +65,5 @@ def detail(request, id):
 
     response.set_cookie('records', records)
     return response
+
+

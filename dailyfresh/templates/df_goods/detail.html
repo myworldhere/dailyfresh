@@ -2,6 +2,13 @@
 {% load staticfiles %}
 {% block head %}
     <script>
+
+           {#function addToCart() {#}
+           {#    let amount = $('.num_show').val()#}
+           {#     let csrfmiddleware = '{{ csrf_token}}';#}
+           {#     $.post('/cart_handle', {'amount' : amount, 'id': {{ goods.id }}, 'csrfmiddlewaretoken': csrfmiddleware},function () {#}
+           {#     })#}
+           {# }#}
             function add() {
                 let num = parseFloat($('.num_show').val());
                 $('.num_show').val(num+1);
@@ -10,10 +17,10 @@
             }
             function minus() {
                 let num = parseFloat($('.num_show').val());
-                if (num<=1){
+                if (num <= 1) {
                     return
                 }
-                $('.num_show').val(num-1);
+                $('.num_show').val(num - 1);
                 $('.num_show').blur();
 
             }
@@ -37,13 +44,13 @@
 	<div class="breadcrumb">
 		<a href="#">全部分类</a>
 		<span>></span>
-		<a href="#">{{ goods.category.title }}</a>
+		<a href="/list_{{ goods.category_id }}_1_1">{{ goods.category.title }}</a>
 		<span>></span>
 		<a href="#">商品详情</a>
 	</div>
 
 	<div class="goods_detail_con clearfix">
-		<div class="goods_detail_pic fl"><img src="{% static 'goods' %}/{{ goods.image }}"></div>
+		<div class="goods_detail_pic fl"><img src="{% static 'goods' %}/{{ goods.image }}" width="333" height="333"></div>
 
 		<div class="goods_detail_list fr">
 			<h3>{{ goods.title }}</h3>
@@ -69,7 +76,7 @@
 			<div class="total">总价：<em class="total_price">{{ goods.price }}元</em></div>
 			<div class="operate_btn">
 				<a href="javascript:;" class="buy_btn">立即购买</a>
-				<a href="javascript:;" class="add_cart" id="add_cart">加入购物车</a>				
+				<a href="javascript:;" class="add_cart" id="add_cart">加入购物车</a>
 			</div>
 		</div>
 	</div>
@@ -107,25 +114,37 @@
 	</div>
 	<div class="add_jump"></div>
 
-	<script type="text/javascript" src="js/jquery-1.12.2.js"></script>
-	<script type="text/javascript">
-		var $add_x = $('#add_cart').offset().top;
-		var $add_y = $('#add_cart').offset().left;
+    <script type="text/javascript">
 
-		var $to_x = $('#show_count').offset().top;
-		var $to_y = $('#show_count').offset().left;
+        let $add_x = $('#add_cart').offset().top;
+		let $add_y = $('#add_cart').offset().left;
+
+		let $to_x = $('#show_count').offset().top;
+        let $to_y = $('#show_count').offset().left;
 
 		$(".add_jump").css({'left':$add_y+80,'top':$add_x+10,'display':'block'})
 		$('#add_cart').click(function(){
+            //判断是否登录，若未登录则提示登录
+            if ($('.login_btn').text().indexOf('登录')>=0){
+                alert('请先登录后再购买');
+                location.href = '/user/login';
+                return;
+            }
+            //动画
 			$(".add_jump").stop().animate({
 				'left': $to_y+7,
 				'top': $to_x+7},
 				"fast", function() {
 					$(".add_jump").fadeOut('fast',function(){
-						$('#show_count').html(2);
 					});
-
 			});
+            //异步
+            let amount = $('.num_show').val();
+            $.get('/cart/add{{ goods.id }}_'+amount+'/',function (data) {
+                if (data.status === 0){
+                   history.go(0);
+                }
+            })
 		})
 	</script>
 {% endblock content %}
