@@ -24,9 +24,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'pkh!*6zxe^i%remvm^&67*1$s8maug4tafrc&%dgx!j%v7ocv^'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -118,8 +118,7 @@ MEDIA_URL = '/static/goods/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'static/goods')
 
 # nginx server static path
-# STATIC_ROOT = '/var/www/dailyfresh/static'
-
+STATIC_ROOT = '/var/www/dailyfresh/static'
 
 TINYMCE_DEFAULT_CONFIG = {
     'theme': 'advanced',
