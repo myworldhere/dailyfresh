@@ -2,6 +2,8 @@
 from django.shortcuts import render, redirect
 from django.core.paginator import Paginator
 from models import *
+from haystack.views import SearchView
+
 # Create your views here.
 
 
@@ -67,3 +69,10 @@ def detail(request, id):
     return response
 
 
+# 自己定全文检索上下文
+class MySearchView(SearchView):
+    def extra_context(self):
+        context = super(MySearchView, self).extra_context()
+        context['title'] = '搜索'
+        context['page_style'] = 'goods'
+        return context
